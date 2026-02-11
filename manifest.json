@@ -4,7 +4,7 @@
   "version": "1.0",
   "description": "Pick any element on a page and copy it to your clipboard as Markdown",
   "homepage_url": "https://isaacmurtagh.github.io/md-web-clipper/",
-  "permissions": ["activeTab", "clipboardWrite"],
+  "permissions": ["activeTab", "clipboardWrite", "scripting"],
   "icons": {
     "16": "assets/icon-16.png",
     "48": "assets/icon-48.png",
@@ -29,12 +29,5 @@
   },
   "background": {
     "service_worker": "src/background.js"
-  },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["lib/turndown.js", "lib/turndown-plugin-gfm.js", "src/content.js"],
-      "run_at": "document_idle"
-    }
-  ]
+  }
 }
