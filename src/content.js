@@ -1,6 +1,10 @@
 (() => {
   let pickerActive = false;
   let overlay = null;
+  let parentOverlay = null;
+  let shiftHeld = false;
+  let selectedElements = [];
+  let selectedOverlays = [];
 
   function createOverlay() {
     const el = document.createElement('div');
@@ -12,17 +16,45 @@
     return el;
   }
 
-  function positionOverlay(el) {
-    const rect = el.getBoundingClientRect();
-    overlay.style.top = rect.top + 'px';
-    overlay.style.left = rect.left + 'px';
-    overlay.style.width = rect.width + 'px';
-    overlay.style.height = rect.height + 'px';
+  function createParentOverlay() {
+    const el = document.createElement('div');
+    el.style.cssText =
+      'position:fixed;pointer-events:none;z-index:2147483646;' +
+      'background:none;border:2px dashed rgba(128,128,128,0.6);' +
+      'transition:all 0.05s ease;border-radius:3px;';
+    document.documentElement.appendChild(el);
+    return el;
+  }
+
+  function createSelectedOverlay() {
+    const el = document.createElement('div');
+    el.style.cssText =
+      'position:fixed;pointer-events:none;z-index:2147483646;' +
+      'background:rgba(0,180,80,0.15);border:2px solid rgba(0,180,80,0.6);' +
+      'border-radius:3px;';
+    document.documentElement.appendChild(el);
+    return el;
+  }
+
+  function positionOverlayOn(overlayEl, targetEl) {
+    const rect = targetEl.getBoundingClientRect();
+    overlayEl.style.top = rect.top + 'px';
+    overlayEl.style.left = rect.left + 'px';
+    overlayEl.style.width = rect.width + 'px';
+    overlayEl.style.height = rect.height + 'px';
   }
 
   function onMouseMove(e) {
     if (!pickerActive) return;
-    positionOverlay(e.target);
+    positionOverlayOn(overlay, e.target);
+
+    const parent = e.target.parentElement;
+    if (parent && parent !== document.body && parent !== document.documentElement) {
+      parentOverlay.style.display = '';
+      positionOverlayOn(parentOverlay, parent);
+    } else {
+      parentOverlay.style.display = 'none';
+    }
   }
 
   function onClick(e) {
@@ -32,13 +64,40 @@
     e.stopImmediatePropagation();
 
     const target = e.target;
+
+    if (shiftHeld) {
+      selectedElements.push(target);
+      const selOverlay = createSelectedOverlay();
+      positionOverlayOn(selOverlay, target);
+      selectedOverlays.push(selOverlay);
+      return;
+    }
+
     deactivate();
-    convert(target);
+    convert([target]);
+    showToast('Markdown copied!');
   }
 
   function onKeyDown(e) {
     if (e.key === 'Escape') {
       deactivate();
+      return;
+    }
+    if (e.key === 'Shift') {
+      shiftHeld = true;
+    }
+  }
+
+  function onKeyUp(e) {
+    if (e.key === 'Shift') {
+      shiftHeld = false;
+      if (selectedElements.length > 0) {
+        const count = selectedElements.length;
+        const elements = [...selectedElements];
+        deactivate();
+        convert(elements);
+        showToast(`${count} elements copied!`);
+      }
     }
   }
 
@@ -46,35 +105,48 @@
     if (pickerActive) return;
     pickerActive = true;
     overlay = createOverlay();
+    parentOverlay = createParentOverlay();
     document.addEventListener('mousemove', onMouseMove, true);
     document.addEventListener('click', onClick, true);
     document.addEventListener('keydown', onKeyDown, true);
+    document.addEventListener('keyup', onKeyUp, true);
   }
 
   function deactivate() {
     pickerActive = false;
+    shiftHeld = false;
     document.removeEventListener('mousemove', onMouseMove, true);
     document.removeEventListener('click', onClick, true);
     document.removeEventListener('keydown', onKeyDown, true);
+    document.removeEventListener('keyup', onKeyUp, true);
     if (overlay) {
       overlay.remove();
       overlay = null;
     }
+    if (parentOverlay) {
+      parentOverlay.remove();
+      parentOverlay = null;
+    }
+    selectedOverlays.forEach((o) => o.remove());
+    selectedOverlays = [];
+    selectedElements = [];
   }
 
-  function convert(element) {
-    const clone = element.cloneNode(true);
-    clone.querySelectorAll('script, style, noscript').forEach((el) => el.remove());
-
+  function convert(elements) {
     const td = new TurndownService({
       headingStyle: 'atx',
       codeBlockStyle: 'fenced',
       bulletListMarker: '-',
     });
 
-    const body = td.turndown(clone);
     const source = `[${document.title}](${location.href})`;
-    const markdown = source + '\n\n' + body;
+    const parts = elements.map((el) => {
+      const clone = el.cloneNode(true);
+      clone.querySelectorAll('script, style, noscript').forEach((s) => s.remove());
+      return td.turndown(clone);
+    });
+
+    const markdown = source + '\n\n' + parts.join('\n\n');
     copyToClipboard(markdown);
   }
 
@@ -90,7 +162,6 @@
       document.execCommand('copy');
       ta.remove();
     }
-    showToast('Markdown copied!');
   }
 
   function showToast(message) {
