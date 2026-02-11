@@ -3,7 +3,7 @@
   "name": "Markdown Web Clipper",
   "version": "1.0",
   "description": "Pick any element on a page and copy it to your clipboard as Markdown",
-  "homepage_url": "https://github.com/IsaacMurtagh/md-web-clipper",
+  "homepage_url": "https://isaacmurtagh.github.io/md-web-clipper/",
   "permissions": ["activeTab", "clipboardWrite"],
   "icons": {
     "16": "assets/icon-16.png",
