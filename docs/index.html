@@ -138,6 +138,32 @@
       color: var(--link);
     }
 
+    /* Screenshots */
+    .screenshots {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .screenshots figure {
+      margin: 0;
+    }
+
+    .screenshots img {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .screenshots figcaption {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 0.4rem;
+    }
+
+
     /* Footer */
     footer {
       border-top: 1px solid var(--border);
@@ -168,11 +194,45 @@
     <section>
       <h2>How it works</h2>
       <ol class="steps">
-        <li>Click the extension icon in your toolbar</li>
-        <li>Hover over any element on the page</li>
-        <li>Click the element you want to capture</li>
-        <li>The Markdown is copied to your clipboard</li>
+        <li>Click the extension icon or press <strong>⌘⇧.</strong> to activate the picker</li>
+        <li>Hover over any element — use <strong>↑↓</strong> arrow keys to navigate to parent or child elements</li>
+        <li>Click to copy, or <strong>⌘Click</strong> to multi-select then <strong>⌘C</strong> to copy all</li>
+        <li>The Markdown is copied to your clipboard — paste it anywhere</li>
       </ol>
+    </section>
+
+    <section>
+      <h2>Screenshots</h2>
+      <div class="screenshots">
+        <figure>
+          <picture>
+            <source srcset="picker-dark.png" media="(prefers-color-scheme: dark)">
+            <img src="picker-light.png" alt="Element picker highlighting a page element">
+          </picture>
+          <figcaption>Pick any element</figcaption>
+        </figure>
+        <figure>
+          <picture>
+            <source srcset="multi-select-dark.png" media="(prefers-color-scheme: dark)">
+            <img src="multi-select-light.png" alt="Multiple elements selected with green overlays">
+          </picture>
+          <figcaption>Multi-select with ⌘Click</figcaption>
+        </figure>
+        <figure>
+          <picture>
+            <source srcset="table-copy-dark.png" media="(prefers-color-scheme: dark)">
+            <img src="table-copy-light.png" alt="Selecting a table from Wikipedia">
+          </picture>
+          <figcaption>Copy tables as Markdown</figcaption>
+        </figure>
+        <figure>
+          <picture>
+            <source srcset="output-chatgpt-dark.png" media="(prefers-color-scheme: dark)">
+            <img src="output-chatgpt-light.png" alt="Markdown output pasted into ChatGPT">
+          </picture>
+          <figcaption>Paste anywhere</figcaption>
+        </figure>
+      </div>
     </section>
 
     <footer>
