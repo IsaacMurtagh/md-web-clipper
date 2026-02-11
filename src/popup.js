@@ -38,6 +38,9 @@ chrome.commands.getAll((commands) => {
   }
 });
 
+const isFirefox = typeof browser !== 'undefined';
+const shortcutsUrl = isFirefox ? 'about:addons' : 'chrome://extensions/shortcuts';
+
 shortcutLink.addEventListener('click', () => {
-  chrome.tabs.create({ url: 'chrome://extensions/shortcuts' });
+  chrome.tabs.create({ url: shortcutsUrl });
 });
