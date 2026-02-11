@@ -283,7 +283,11 @@
 
   chrome.runtime.onMessage.addListener((msg) => {
     if (msg.action === 'activate-picker') {
-      activate();
+      if (pickerActive) {
+        deactivate();
+      } else {
+        activate();
+      }
     }
   });
 })();
