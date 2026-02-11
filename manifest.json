@@ -18,10 +18,22 @@
       "128": "assets/icon-128.png"
     }
   },
+  "commands": {
+    "activate-picker": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Period",
+        "mac": "Command+Shift+Period"
+      },
+      "description": "Activate element picker"
+    }
+  },
+  "background": {
+    "service_worker": "src/background.js"
+  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["lib/turndown.js", "src/content.js"],
+      "js": ["lib/turndown.js", "lib/turndown-plugin-gfm.js", "src/content.js"],
       "run_at": "document_idle"
     }
   ]

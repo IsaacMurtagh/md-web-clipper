@@ -18,7 +18,7 @@ A Chrome extension that lets you pick any element on a page and copy it to your 
 
 ## Third-party
 
-This extension bundles [Turndown](https://github.com/mixmark-io/turndown) by Dom Christie (MIT License) for HTML-to-Markdown conversion.
+This extension bundles [Turndown](https://github.com/mixmark-io/turndown) and [turndown-plugin-gfm](https://github.com/mixmark-io/turndown-plugin-gfm) by Dom Christie (MIT License) for HTML-to-Markdown conversion.
 
 ## License
 
