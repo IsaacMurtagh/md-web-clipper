@@ -1,4 +1,6 @@
 (() => {
+  const isMac = /Mac|iPhone|iPad/.test(navigator.platform);
+
   let pickerActive = false;
   let overlay = null;
   let parentOverlay = null;
@@ -42,8 +44,8 @@
     const el = document.createElement('div');
     const shortcuts = [
       ['Click', 'Copy'],
-      ['\u2318 Click', 'Multi-select'],
-      ['\u2318 C', 'Copy selected'],
+      [isMac ? '\u2318 Click' : 'Ctrl Click', 'Multi-select'],
+      [isMac ? '\u2318 C' : 'Ctrl C', 'Copy selected'],
       ['\u2191\u2193', 'Navigate'],
       ['Esc', 'Cancel'],
     ];
@@ -136,7 +138,7 @@
     e.stopPropagation();
     e.stopImmediatePropagation();
 
-    selectElement(currentTarget || e.target, e.metaKey);
+    selectElement(currentTarget || e.target, isMac ? e.metaKey : e.ctrlKey);
   }
 
   function onKeyDown(e) {
@@ -173,7 +175,7 @@
       return;
     }
 
-    if (e.key === 'c' && e.metaKey) {
+    if (e.key === 'c' && (isMac ? e.metaKey : e.ctrlKey)) {
       e.preventDefault();
       if (selectedElements.length > 0) {
         const count = selectedElements.length;
