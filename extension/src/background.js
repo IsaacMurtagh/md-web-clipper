@@ -8,7 +8,7 @@ async function activatePicker(tabId) {
   // Inject scripts then activate
   await chrome.scripting.executeScript({
     target: { tabId },
-    files: ['lib/turndown.js', 'lib/turndown-plugin-gfm.js', 'src/converter.js', 'src/content.js'],
+    files: ['lib/turndown.js', 'lib/turndown-plugin-gfm.js', 'lib/marked.min.js', 'src/converter.js', 'src/content.js'],
   });
   await chrome.tabs.sendMessage(tabId, { action: 'activate-picker' });
 }

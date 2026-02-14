@@ -11,4 +11,5 @@ function loadScript(relativePath) {
 
 loadScript('extension/lib/turndown.js');
 loadScript('extension/lib/turndown-plugin-gfm.js');
+loadScript('extension/lib/marked.min.js');
 loadScript('extension/src/converter.js');

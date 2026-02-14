@@ -13,12 +13,15 @@ export default [
         requestAnimationFrame: 'readonly',
         setTimeout: 'readonly',
         console: 'readonly',
+        Blob: 'readonly',
+        ClipboardItem: 'readonly',
         // Extension globals
         chrome: 'readonly',
         browser: 'readonly',
         // Libraries injected before content/converter
         TurndownService: 'readonly',
         turndownPluginGfm: 'readonly',
+        marked: 'readonly',
         // Our converter global
         convertToMarkdown: 'readonly',
       },

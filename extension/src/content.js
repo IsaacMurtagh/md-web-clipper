@@ -240,12 +240,17 @@
     copyToClipboard(markdown);
   }
 
-  async function copyToClipboard(text) {
+  async function copyToClipboard(markdown) {
+    const html = marked.parse(markdown);
     try {
-      await navigator.clipboard.writeText(text);
+      const item = new ClipboardItem({
+        'text/plain': new Blob([markdown], { type: 'text/plain' }),
+        'text/html': new Blob([html], { type: 'text/html' }),
+      });
+      await navigator.clipboard.write([item]);
     } catch {
       const ta = document.createElement('textarea');
-      ta.value = text;
+      ta.value = markdown;
       ta.style.cssText = 'position:fixed;left:-9999px;';
       document.body.appendChild(ta);
       ta.select();

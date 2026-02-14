@@ -222,4 +222,32 @@ describe('convertToMarkdown', () => {
     const md = convertToMarkdown([el], 'My Page', 'https://my.site/page');
     expect(md).toMatch(/^\[My Page\]\(https:\/\/my\.site\/page\)/);
   });
+
+  describe('markdown to HTML round-trip', () => {
+    it('converts markdown back to structural HTML via marked', () => {
+      const el = html`<h1>Title</h1><p>A <strong>bold</strong> paragraph.</p>`;
+      const md = convert([el]);
+      const result = marked.parse(md);
+      expect(result).toContain('<h1>');
+      expect(result).toContain('<strong>bold</strong>');
+      expect(result).toContain('<p>');
+    });
+
+    it('round-trips a list through markdown and back to HTML', () => {
+      const el = html`<ul><li>one</li><li>two</li></ul>`;
+      const md = convert([el]);
+      const result = marked.parse(md);
+      expect(result).toContain('<ul>');
+      expect(result).toContain('<li>one</li>');
+      expect(result).toContain('<li>two</li>');
+    });
+
+    it('round-trips a code block through markdown and back to HTML', () => {
+      const el = html`<pre><code>const x = 1;</code></pre>`;
+      const md = convert([el]);
+      const result = marked.parse(md);
+      expect(result).toContain('<code>');
+      expect(result).toContain('const x = 1;');
+    });
+  });
 });
