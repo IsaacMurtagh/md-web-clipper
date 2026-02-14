@@ -1,6 +1,9 @@
 (() => {
   const isMac = /Mac|iPhone|iPad/.test(navigator.platform);
 
+  let highlightColor = '#0066ff';
+  let selectionColor = '#00b450';
+
   let pickerActive = false;
   let overlay = null;
   let parentOverlay = null;
@@ -10,11 +13,18 @@
   let selectedElements = [];
   let selectedOverlays = [];
 
+  function hexToRgba(hex, alpha) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+
   function createOverlay() {
     const el = document.createElement('div');
     el.style.cssText =
       'position:fixed;pointer-events:none;z-index:2147483647;' +
-      'background:rgba(0,102,255,0.15);border:2px solid rgba(0,102,255,0.6);' +
+      `background:${hexToRgba(highlightColor, 0.15)};border:2px solid ${hexToRgba(highlightColor, 0.6)};` +
       'transition:all 0.05s ease;border-radius:3px;';
     document.documentElement.appendChild(el);
     return el;
@@ -34,7 +44,7 @@
     const el = document.createElement('div');
     el.style.cssText =
       'position:fixed;pointer-events:none;z-index:2147483646;' +
-      'background:rgba(0,180,80,0.15);border:2px solid rgba(0,180,80,0.6);' +
+      `background:${hexToRgba(selectionColor, 0.15)};border:2px solid ${hexToRgba(selectionColor, 0.6)};` +
       'border-radius:3px;';
     document.documentElement.appendChild(el);
     return el;
@@ -93,6 +103,15 @@
     } else {
       parentOverlay.style.display = 'none';
     }
+
+    selectedElements.forEach((el, i) => {
+      positionOverlayOn(selectedOverlays[i], el);
+    });
+  }
+
+  function onScroll() {
+    if (!pickerActive) return;
+    updateOverlays();
   }
 
   function onMouseMove(e) {
@@ -128,7 +147,7 @@
     } else {
       deactivate();
       convert([el]);
-      showToast('Markdown copied!');
+      showToast('Copied!');
     }
   }
 
@@ -182,11 +201,11 @@
         const elements = [...selectedElements];
         deactivate();
         convert(elements);
-        showToast(`${count} element${count > 1 ? 's' : ''} copied!`);
+        showToast(`${count} elements copied!`);
       } else if (currentTarget) {
         deactivate();
         convert([currentTarget]);
-        showToast('Markdown copied!');
+        showToast('Copied!');
       }
       return;
     }
@@ -194,12 +213,24 @@
     if (e.key === 'Enter') {
       e.preventDefault();
       if (!currentTarget) return;
-      selectElement(currentTarget, true);
+      selectElement(currentTarget, isMac ? e.metaKey : e.ctrlKey);
     }
   }
 
-  function activate() {
+  async function activate() {
     if (pickerActive) return;
+    if (chrome.storage?.sync) {
+      try {
+        const values = await chrome.storage.sync.get({
+          highlightColor: '#0066ff',
+          selectionColor: '#00b450',
+        });
+        highlightColor = values.highlightColor;
+        selectionColor = values.selectionColor;
+      } catch {
+        // storage unavailable, use defaults
+      }
+    }
     pickerActive = true;
     currentTarget = null;
     deepestTarget = null;
@@ -209,6 +240,7 @@
     document.addEventListener('mousemove', onMouseMove, true);
     document.addEventListener('click', onClick, true);
     document.addEventListener('keydown', onKeyDown, true);
+    document.addEventListener('scroll', onScroll, true);
   }
 
   function deactivate() {
@@ -218,6 +250,7 @@
     document.removeEventListener('mousemove', onMouseMove, true);
     document.removeEventListener('click', onClick, true);
     document.removeEventListener('keydown', onKeyDown, true);
+    document.removeEventListener('scroll', onScroll, true);
     if (overlay) {
       overlay.remove();
       overlay = null;

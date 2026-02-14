@@ -10,7 +10,63 @@ body {
 
 h1 {
   font-size: 16px;
-  margin: 0 0 12px;
+  margin: 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 2px;
+  color: light-dark(#666, #999);
+  width: auto;
+}
+
+.icon-btn:hover {
+  color: light-dark(#333, #ccc);
+  background: none;
+}
+
+.icon-btn:active {
+  background: none;
+}
+
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid light-dark(#eee, #333);
+}
+
+.color-setting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.color-setting label {
+  font-size: 12px;
+  color: light-dark(#666, #999);
+}
+
+.color-setting input[type="color"] {
+  width: 32px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid light-dark(#ddd, #444);
+  border-radius: 4px;
+  cursor: pointer;
+  background: none;
 }
 
 button {

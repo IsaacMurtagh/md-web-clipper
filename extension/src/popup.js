@@ -1,3 +1,29 @@
+const DEFAULTS = { highlightColor: '#0066ff', selectionColor: '#00b450' };
+
+const settingsToggle = document.getElementById('settings-toggle');
+const settingsPanel = document.getElementById('settings');
+const highlightInput = document.getElementById('highlight-color');
+const selectionInput = document.getElementById('selection-color');
+
+settingsToggle.addEventListener('click', () => {
+  settingsPanel.hidden = !settingsPanel.hidden;
+});
+
+if (chrome.storage?.sync) {
+  chrome.storage.sync.get(DEFAULTS, (values) => {
+    highlightInput.value = values.highlightColor;
+    selectionInput.value = values.selectionColor;
+  });
+}
+
+highlightInput.addEventListener('input', () => {
+  chrome.storage?.sync?.set({ highlightColor: highlightInput.value });
+});
+
+selectionInput.addEventListener('input', () => {
+  chrome.storage?.sync?.set({ selectionColor: selectionInput.value });
+});
+
 document.getElementById('pick').addEventListener('click', () => {
   const status = document.getElementById('status');
   chrome.runtime.sendMessage({ action: 'activate-picker-from-popup' }, (res) => {

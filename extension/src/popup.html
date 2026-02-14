@@ -5,9 +5,44 @@
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <h1>Markdown Web Clipper</h1>
+  <div class="header">
+    <h1>Markdown Web Clipper</h1>
+    <button id="settings-toggle" class="icon-btn" title="Settings">&#9881;</button>
+  </div>
   <button id="pick">Pick Element</button>
   <p id="status"></p>
+  <div id="settings" class="settings" hidden>
+    <div class="color-setting">
+      <label for="highlight-color">Highlight</label>
+      <input type="color" id="highlight-color" value="#0066ff" list="color-presets">
+    </div>
+    <div class="color-setting">
+      <label for="selection-color">Selection</label>
+      <input type="color" id="selection-color" value="#00b450" list="color-presets">
+    </div>
+    <datalist id="color-presets">
+      <option>#ef4444</option>
+      <option>#f97316</option>
+      <option>#eab308</option>
+      <option>#84cc16</option>
+      <option>#00b450</option>
+      <option>#0d9488</option>
+      <option>#06b6d4</option>
+      <option>#3b82f6</option>
+      <option>#0066ff</option>
+      <option>#6366f1</option>
+      <option>#8b5cf6</option>
+      <option>#a855f7</option>
+      <option>#d946ef</option>
+      <option>#ec4899</option>
+      <option>#f43f5e</option>
+      <option>#78716c</option>
+      <option>#64748b</option>
+      <option>#1e293b</option>
+      <option>#ffffff</option>
+      <option>#000000</option>
+    </datalist>
+  </div>
   <div class="shortcut-section">
     <span class="shortcut-label">Shortcut:</span>
     <div class="shortcut-display" id="shortcut-display"></div>

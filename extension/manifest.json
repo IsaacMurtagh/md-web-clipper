@@ -4,7 +4,7 @@
   "version": "1.0",
   "description": "Pick any element on a page and copy it to your clipboard as Markdown",
   "homepage_url": "https://isaacmurtagh.github.io/md-web-clipper/",
-  "permissions": ["activeTab", "clipboardWrite", "scripting"],
+  "permissions": ["activeTab", "clipboardWrite", "scripting", "storage"],
   "browser_specific_settings": {
     "gecko": {
       "id": "md-web-clipper@isaacmurtagh.github.io",
