@@ -1,6 +1,16 @@
 # Markdown Web Clipper
 
-A Chrome extension that lets you pick any element on a page and copy it to your clipboard as Markdown.
+A browser extension for Chrome and Firefox that lets you pick any element on a page and copy it to your clipboard as Markdown.
+
+<a href="https://chromewebstore.google.com/detail/markdown-web-clipper/bmnlhmbfgfjjjmdcapfhdfjeojlmiemg">
+  <img src="https://developer.chrome.com/static/docs/webstore/branding/image/mPGKYBIR2uCP0ApchDXE.png" alt="Available in the Chrome Web Store" height="58">
+</a>
+
+<!-- Firefox Add-ons - uncomment when approved
+<a href="https://addons.mozilla.org/en-US/firefox/addon/SLUG/">
+  <img src="https://blog.mozilla.org/addons/files/2020/04/get-the-addon-fx-apr-2020.svg" alt="Get the Add-on for Firefox" height="58">
+</a>
+-->
 
 [Website](https://isaacmurtagh.github.io/md-web-clipper/)
 
