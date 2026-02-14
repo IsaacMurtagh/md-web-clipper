@@ -4,6 +4,7 @@
   let highlightColor = '#0066ff';
   let selectionColor = '#00b450';
   let includeSource = false;
+  let welcomeBanner = null;
 
   let pickerActive = false;
   let overlay = null;
@@ -83,6 +84,54 @@
     });
     document.documentElement.appendChild(el);
     return el;
+  }
+
+  function createWelcomeBanner() {
+    const el = document.createElement('div');
+    el.style.cssText =
+      'position:fixed;top:24px;left:50%;transform:translateX(-50%);z-index:2147483647;' +
+      'background:rgba(0,0,0,0.75);color:#fff;padding:14px 20px;border-radius:12px;' +
+      'font:13px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;' +
+      'backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);' +
+      'text-align:center;max-width:340px;cursor:pointer;' +
+      'opacity:0;transition:opacity 0.3s;';
+
+    el.innerHTML =
+      '<div style="font-weight:600;margin-bottom:4px;">Welcome to Markdown Web Clipper!</div>' +
+      '<div style="font-size:12px;color:rgba(255,255,255,0.7);">Hover over any element and click to copy it as Markdown. ' +
+      'Check the controls below to get started, and visit the playground from settings to try it out.</div>';
+
+    setTimeout(() => dismissWelcome(), 5000);
+
+    document.documentElement.appendChild(el);
+    requestAnimationFrame(() => (el.style.opacity = '1'));
+    return el;
+  }
+
+  function flashInstructionBar() {
+    if (!instructionBar) return;
+    instructionBar.style.transition = 'transform 0.3s ease';
+    instructionBar.style.transform = 'translateX(-50%) scale(1.08)';
+    setTimeout(() => {
+      instructionBar.style.transform = 'translateX(-50%) scale(1)';
+      setTimeout(() => {
+        instructionBar.style.transform = 'translateX(-50%) scale(1.08)';
+        setTimeout(() => {
+          instructionBar.style.transform = 'translateX(-50%) scale(1)';
+        }, 300);
+      }, 300);
+    }, 300);
+  }
+
+  function dismissWelcome() {
+    if (welcomeBanner) {
+      welcomeBanner.style.opacity = '0';
+      setTimeout(() => {
+        welcomeBanner.remove();
+        welcomeBanner = null;
+        flashInstructionBar();
+      }, 300);
+    }
   }
 
   function positionOverlayOn(overlayEl, targetEl) {
@@ -220,16 +269,19 @@
 
   async function activate() {
     if (pickerActive) return;
+    let walkthroughSeen = true;
     if (chrome.storage?.sync) {
       try {
         const values = await chrome.storage.sync.get({
           highlightColor: '#0066ff',
           selectionColor: '#00b450',
           includeSource: false,
+          walkthroughSeen: false,
         });
         highlightColor = values.highlightColor;
         selectionColor = values.selectionColor;
         includeSource = values.includeSource;
+        walkthroughSeen = values.walkthroughSeen;
       } catch {
         // storage unavailable, use defaults
       }
@@ -240,6 +292,10 @@
     overlay = createOverlay();
     parentOverlay = createParentOverlay();
     instructionBar = createInstructionBar();
+    if (!walkthroughSeen && chrome.storage?.sync) {
+      welcomeBanner = createWelcomeBanner();
+      chrome.storage.sync.set({ walkthroughSeen: true });
+    }
     document.addEventListener('mousemove', onMouseMove, true);
     document.addEventListener('click', onClick, true);
     document.addEventListener('keydown', onKeyDown, true);
@@ -265,6 +321,10 @@
     if (instructionBar) {
       instructionBar.remove();
       instructionBar = null;
+    }
+    if (welcomeBanner) {
+      welcomeBanner.remove();
+      welcomeBanner = null;
     }
     selectedOverlays.forEach((o) => o.remove());
     selectedOverlays = [];

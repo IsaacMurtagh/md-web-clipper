@@ -89,6 +89,16 @@ h1 {
   color: light-dark(#666, #999);
 }
 
+.settings-link {
+  font-size: 12px;
+  color: light-dark(#3b82f6, #60a5fa);
+  text-decoration: none;
+}
+
+.settings-link:hover {
+  text-decoration: underline;
+}
+
 .color-setting input[type="color"] {
   width: 32px;
   height: 24px;

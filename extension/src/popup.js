@@ -1,10 +1,11 @@
-const DEFAULTS = { highlightColor: '#0066ff', selectionColor: '#00b450', includeSource: false };
+const DEFAULTS = { highlightColor: '#0066ff', selectionColor: '#00b450', includeSource: false, walkthroughSeen: false };
 
 const settingsToggle = document.getElementById('settings-toggle');
 const settingsPanel = document.getElementById('settings');
 const highlightInput = document.getElementById('highlight-color');
 const selectionInput = document.getElementById('selection-color');
 const includeSourceInput = document.getElementById('include-source');
+const showWelcomeInput = document.getElementById('show-welcome');
 
 settingsToggle.addEventListener('click', () => {
   settingsPanel.hidden = !settingsPanel.hidden;
@@ -15,6 +16,7 @@ if (chrome.storage?.sync) {
     highlightInput.value = values.highlightColor;
     selectionInput.value = values.selectionColor;
     includeSourceInput.checked = values.includeSource;
+    showWelcomeInput.checked = !values.walkthroughSeen;
   });
 }
 
@@ -34,6 +36,10 @@ moreDetails.addEventListener('toggle', () => {
 
 includeSourceInput.addEventListener('change', () => {
   chrome.storage?.sync?.set({ includeSource: includeSourceInput.checked });
+});
+
+showWelcomeInput.addEventListener('change', () => {
+  chrome.storage?.sync?.set({ walkthroughSeen: !showWelcomeInput.checked });
 });
 
 document.getElementById('pick').addEventListener('click', () => {
