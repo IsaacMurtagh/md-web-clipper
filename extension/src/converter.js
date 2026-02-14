@@ -24,7 +24,6 @@ var convertToMarkdown = (function () {
       }
     });
 
-    var source = '[' + documentTitle + '](' + pageUrl + ')';
     var parts = elements.map(function (el) {
       var clone = el.cloneNode(true);
       clone.querySelectorAll('script, style, noscript').forEach(function (s) { s.remove(); });
@@ -40,7 +39,11 @@ var convertToMarkdown = (function () {
       return td.turndown(clone);
     });
 
-    return source + '\n\n' + parts.join('\n\n');
+    var result = parts.join('\n\n');
+    if (documentTitle && pageUrl) {
+      result = '[' + documentTitle + '](' + pageUrl + ')\n\n' + result;
+    }
+    return result;
   }
 
   return convertToMarkdown;

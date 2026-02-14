@@ -3,6 +3,7 @@
 
   let highlightColor = '#0066ff';
   let selectionColor = '#00b450';
+  let includeSource = false;
 
   let pickerActive = false;
   let overlay = null;
@@ -224,9 +225,11 @@
         const values = await chrome.storage.sync.get({
           highlightColor: '#0066ff',
           selectionColor: '#00b450',
+          includeSource: false,
         });
         highlightColor = values.highlightColor;
         selectionColor = values.selectionColor;
+        includeSource = values.includeSource;
       } catch {
         // storage unavailable, use defaults
       }
@@ -269,7 +272,9 @@
   }
 
   function convert(elements) {
-    const markdown = convertToMarkdown(elements, document.title, location.href);
+    const title = includeSource ? document.title : null;
+    const url = includeSource ? location.href : null;
+    const markdown = convertToMarkdown(elements, title, url);
     copyToClipboard(markdown);
   }
 

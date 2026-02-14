@@ -1,9 +1,10 @@
-const DEFAULTS = { highlightColor: '#0066ff', selectionColor: '#00b450' };
+const DEFAULTS = { highlightColor: '#0066ff', selectionColor: '#00b450', includeSource: false };
 
 const settingsToggle = document.getElementById('settings-toggle');
 const settingsPanel = document.getElementById('settings');
 const highlightInput = document.getElementById('highlight-color');
 const selectionInput = document.getElementById('selection-color');
+const includeSourceInput = document.getElementById('include-source');
 
 settingsToggle.addEventListener('click', () => {
   settingsPanel.hidden = !settingsPanel.hidden;
@@ -13,6 +14,7 @@ if (chrome.storage?.sync) {
   chrome.storage.sync.get(DEFAULTS, (values) => {
     highlightInput.value = values.highlightColor;
     selectionInput.value = values.selectionColor;
+    includeSourceInput.checked = values.includeSource;
   });
 }
 
@@ -22,6 +24,16 @@ highlightInput.addEventListener('input', () => {
 
 selectionInput.addEventListener('input', () => {
   chrome.storage?.sync?.set({ selectionColor: selectionInput.value });
+});
+
+const moreDetails = document.querySelector('.disclosure');
+const moreSummary = document.getElementById('more-settings-summary');
+moreDetails.addEventListener('toggle', () => {
+  moreSummary.textContent = moreDetails.open ? 'Hide settings' : 'Show more settings';
+});
+
+includeSourceInput.addEventListener('change', () => {
+  chrome.storage?.sync?.set({ includeSource: includeSourceInput.checked });
 });
 
 document.getElementById('pick').addEventListener('click', () => {
