@@ -5,7 +5,7 @@ A browser extension for Chrome and Firefox that lets you pick any element on a p
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/bmnlhmbfgfjjjmdcapfhdfjeojlmiemg)](https://chromewebstore.google.com/detail/markdown-web-clipper/bmnlhmbfgfjjjmdcapfhdfjeojlmiemg)
 [![Firefox Add-on](https://img.shields.io/amo/v/web-content-md-clipper)](https://addons.mozilla.org/en-US/firefox/addon/web-content-md-clipper/)
 
-[Website](https://isaacmurtagh.github.io/md-web-clipper/)
+[Website](https://isaacmurtagh.github.io/md-web-clipper/) · [Playground](https://isaacmurtagh.github.io/md-web-clipper/playground)
 
 ![Element picker](docs/picker-light.png)
 

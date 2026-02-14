@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Playground — Markdown Web Clipper</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link href="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.snow.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #1a1a1a;
+      --muted: #555555;
+      --border: #e0e0e0;
+      --code-bg: #f5f5f5;
+      --link: #0969da;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a1a1a;
+        --text: #e0e0e0;
+        --muted: #999999;
+        --border: #333333;
+        --code-bg: #2a2a2a;
+        --link: #58a6ff;
+      }
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      max-width: 1100px;
+      margin: 0 auto;
+      gap: 2rem;
+      padding: 2rem 1.5rem;
+      position: relative;
+    }
+
+    @media (max-width: 800px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left column — content */
+    .content {
+      min-width: 0;
+    }
+
+    .back {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-decoration: none;
+      margin-bottom: 1.5rem;
+      display: inline-block;
+    }
+
+    .back:hover {
+      color: var(--link);
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+
+    .section {
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+    }
+
+    .section h2 {
+      font-size: 1.2rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .section-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .section a {
+      color: var(--link);
+    }
+
+    .section p {
+      margin-bottom: 0.75rem;
+    }
+
+    .section ul, .section ol {
+      margin-bottom: 0.75rem;
+      padding-left: 1.5rem;
+    }
+
+    .section li {
+      margin-bottom: 0.25rem;
+    }
+
+    .section blockquote {
+      border-left: 3px solid var(--border);
+      padding-left: 1rem;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .section pre {
+      background: var(--code-bg);
+      padding: 1rem;
+      border-radius: 6px;
+      overflow-x: auto;
+      margin-bottom: 0.75rem;
+    }
+
+    .section code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.9em;
+    }
+
+    .section :not(pre) > code {
+      background: var(--code-bg);
+      padding: 0.15em 0.4em;
+      border-radius: 3px;
+    }
+
+    .section table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 0.75rem;
+    }
+
+    .section th, .section td {
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.75rem;
+      text-align: left;
+    }
+
+    .section th {
+      background: var(--code-bg);
+      font-weight: 600;
+    }
+
+    .section hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 1rem 0;
+    }
+
+    .section img {
+      max-width: 100%;
+      border-radius: 6px;
+    }
+
+    .cta {
+      background: var(--code-bg);
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .cta p {
+      margin-bottom: 0;
+    }
+
+    /* Right column — editors */
+    .sidebar {
+      position: sticky;
+      top: 2rem;
+      align-self: start;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      height: calc(100vh - 4rem);
+    }
+
+    .editor-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .editor-card h3 {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      padding: 0.75rem 1rem 0;
+    }
+
+    .editor-card .editor-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      padding: 0.25rem 1rem 0.75rem;
+    }
+
+    .editor-card {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .editor-card textarea {
+      display: block;
+      width: 100%;
+      min-height: 300px;
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-top: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.8rem;
+      line-height: 1.5;
+      resize: vertical;
+      outline: none;
+    }
+
+    #rich-editor {
+      flex: 1;
+      min-height: 250px;
+    }
+
+    #rich-editor .ql-editor {
+      min-height: 250px;
+    }
+
+    .editor-card .ql-toolbar {
+      border-left: none;
+      border-right: none;
+      border-top: 1px solid var(--border);
+    }
+
+    .editor-card .ql-container {
+      border: none;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 0.85rem;
+    }
+
+    .ql-editor.ql-blank::before {
+      color: var(--muted);
+      font-style: normal;
+    }
+
+    .ql-editor {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .ql-editor a {
+      color: var(--link);
+    }
+
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <div class="content">
+      <a class="back" href="./">&larr; Back to home</a>
+
+      <h1>Playground</h1>
+      <p class="subtitle">Activate the picker and try clipping each section below. Paste into the editors on the right to see the result.</p>
+
+      <div class="section">
+        <h2>1. Rich Text</h2>
+        <p class="section-desc">Inline formatting like bold, italic, code and links are converted to their Markdown equivalents.</p>
+        <p>This is a paragraph with <strong>bold text</strong>, <em>italic text</em>, and <code>inline code</code>. It also has a <a href="https://example.com">link to example.com</a>.</p>
+        <p>Here is a second paragraph. Markdown preserves paragraph breaks, so both of these will come through as separate blocks.</p>
+      </div>
+
+      <div class="section">
+        <h2>2. Lists</h2>
+        <p class="section-desc">Both ordered and unordered lists are supported, including nested items.</p>
+        <ul>
+          <li>Unordered item one</li>
+          <li>Unordered item two
+            <ul>
+              <li>A nested item</li>
+              <li>Another nested item</li>
+            </ul>
+          </li>
+          <li>Unordered item three with <strong>bold</strong></li>
+        </ul>
+        <ol>
+          <li>First ordered item</li>
+          <li>Second ordered item</li>
+          <li>Third ordered item</li>
+        </ol>
+      </div>
+
+      <div class="section">
+        <h2>3. Blockquote</h2>
+        <p class="section-desc">Blockquotes become <code>&gt;</code> prefixed lines in Markdown, great for clipping quotes from articles.</p>
+        <blockquote>
+          <p>The best way to predict the future is to invent it.</p>
+        </blockquote>
+      </div>
+
+      <div class="section">
+        <h2>4. Code Block</h2>
+        <p class="section-desc">Code blocks are preserved with their formatting, wrapped in triple backtick fences.</p>
+        <pre><code>function greet(name) {
+  return `Hello, ${name}!`;
+}
+
+console.log(greet('World'));</code></pre>
+      </div>
+
+      <div class="section">
+        <h2>5. Table</h2>
+        <p class="section-desc">HTML tables become GFM pipe tables. Try clipping tables from Wikipedia or docs sites.</p>
+        <table>
+          <thead>
+            <tr>
+              <th>Format</th>
+              <th>Extension</th>
+              <th>Use case</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Markdown</td>
+              <td>.md</td>
+              <td>Documentation, notes</td>
+            </tr>
+            <tr>
+              <td>HTML</td>
+              <td>.html</td>
+              <td>Web pages</td>
+            </tr>
+            <tr>
+              <td>Plain text</td>
+              <td>.txt</td>
+              <td>Simple notes</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>6. Mixed Content</h2>
+        <p class="section-desc">Real-world content mixes headings, text, lists and links. Use arrow keys to expand your selection to a parent element.</p>
+        <h3>Getting started</h3>
+        <p>Follow these steps to set up your project:</p>
+        <ol>
+          <li>Clone the repository</li>
+          <li>Run <code>npm install</code></li>
+          <li>Start the dev server with <code>npm run dev</code></li>
+        </ol>
+        <hr>
+        <p>For more details, check the <a href="https://example.com">documentation</a>.</p>
+      </div>
+
+      <div class="section">
+        <h2>7. All Together</h2>
+        <div class="cta">
+          <p>Now try multi-select! Hold <strong>Cmd</strong> (or <strong>Ctrl</strong>) and click several sections above, then press <strong>Cmd+C</strong> to copy them all at once. Try clicking just below this box to select the entire page.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar">
+      <div class="editor-card">
+        <h3>Rich Text</h3>
+        <p class="editor-desc">Paste with <strong>Cmd+V</strong> to preview the formatted output. This is what apps like Google Docs, Word, Notion and Slack will display.</p>
+        <div id="rich-editor"></div>
+      </div>
+      <div class="editor-card">
+        <h3>Plain Text</h3>
+        <p class="editor-desc">Paste with <strong>Cmd+V</strong> to see the raw Markdown. This is what Markdown editors like Obsidian, and AI chats like ChatGPT and Gemini will receive.</p>
+        <textarea placeholder="Paste Markdown here..."></textarea>
+      </div>
+    </div>
+
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/quill@2/dist/quill.js"></script>
+  <script>
+    new Quill('#rich-editor', {
+      theme: 'snow',
+      placeholder: 'Paste rich text here...',
+      modules: { toolbar: false },
+    });
+  </script>
+</body>
+</html>
