@@ -95,6 +95,18 @@ button:active {
   min-height: 16px;
 }
 
+.try-hint:not([hidden]) {
+  display: block;
+  font-size: 12px;
+  color: light-dark(#3b82f6, #60a5fa);
+  text-decoration: none;
+  margin-top: 4px;
+}
+
+.try-hint:hover {
+  text-decoration: underline;
+}
+
 .shortcut-section {
   margin-top: 12px;
   display: flex;

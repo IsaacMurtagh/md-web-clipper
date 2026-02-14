@@ -29,7 +29,8 @@ document.getElementById('pick').addEventListener('click', () => {
   chrome.runtime.sendMessage({ action: 'activate-picker-from-popup' }, (res) => {
     if (res?.error) {
       console.error('html-to-md:', res.error);
-      status.textContent = 'Could not reach this page. Try refreshing first.';
+      status.textContent = res.error;
+      document.getElementById('try-hint').hidden = false;
     } else {
       window.close();
     }
