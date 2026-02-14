@@ -1,0 +1,16 @@
+{
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint extension/src/",
+    "lint:ext": "web-ext lint --source-dir=extension"
+  },
+  "devDependencies": {
+    "vitest": "^3.0.0",
+    "jsdom": "^25.0.0",
+    "eslint": "^9.0.0",
+    "web-ext": "^8.0.0"
+  }
+}

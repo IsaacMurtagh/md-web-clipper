@@ -236,46 +236,7 @@
   }
 
   function convert(elements) {
-    const td = new TurndownService({
-      headingStyle: 'atx',
-      codeBlockStyle: 'fenced',
-      bulletListMarker: '-',
-    });
-    td.use(turndownPluginGfm.gfm);
-
-    // Override table cell rule to collapse multi-line content and add
-    // spaces between inline elements that would otherwise concatenate.
-    td.addRule('cleanTableCell', {
-      filter: ['th', 'td'],
-      replacement: function (content, node) {
-        var index = Array.prototype.indexOf.call(node.parentNode.childNodes, node);
-        var prefix = index === 0 ? '| ' : ' ';
-        var clean = content
-          .replace(/\n/g, ' ')
-          .replace(/\s{2,}/g, ' ')
-          .replace(/\|/g, '\\|')
-          .trim();
-        return prefix + clean + ' |';
-      }
-    });
-
-    const source = `[${document.title}](${location.href})`;
-    const parts = elements.map((el) => {
-      const clone = el.cloneNode(true);
-      clone.querySelectorAll('script, style, noscript').forEach((s) => s.remove());
-      // Add space between adjacent inline elements in table cells
-      // so "Alex Taylor<span>merchant</span>" becomes "Alex Taylor merchant"
-      clone.querySelectorAll('td, th').forEach((cell) => {
-        cell.childNodes.forEach((child) => {
-          if (child.nodeType === 1 && child.previousSibling) {
-            cell.insertBefore(document.createTextNode(' '), child);
-          }
-        });
-      });
-      return td.turndown(clone);
-    });
-
-    const markdown = source + '\n\n' + parts.join('\n\n');
+    const markdown = convertToMarkdown(elements, document.title, location.href);
     copyToClipboard(markdown);
   }
 
